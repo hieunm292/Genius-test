@@ -5,7 +5,11 @@ const fetchP = import('node-fetch').then(mod => mod.default)
 
 module.exports.show = async( req, res) =>{
   try {
-    const account = await prisma.account.findMany()
+    const account = await prisma.account.findMany({
+      include: {
+        tasks: true,
+      }
+    })
       res.json({
         status: 'success',
         result: account.length,
@@ -15,14 +19,17 @@ module.exports.show = async( req, res) =>{
   catch (error) {
     return res.status(500).json({message: error.message})
   }
+  finally {
+    async () =>
+      await prisma.$disconnect()
+  }
 }
 
 module.exports.findById = async( req, res) =>{
   try {
-    const id = req.params.id
     const account = await prisma.account.findUnique({
       where : {
-        id : Number(id)
+        id : Number(req.params.id)
       }
     })
     if(account){
@@ -34,6 +41,10 @@ module.exports.findById = async( req, res) =>{
   } 
   catch (error) {
     return res.status(500).json({message: error.message})
+  }
+  finally {
+    async () =>
+      await prisma.$disconnect()
   }
 }
 
@@ -174,6 +185,10 @@ module.exports.update = async( req, res) =>{
   catch (error) {
     return res.status(500).json({message: error.message})
   }
+  finally {
+    async () =>
+      await prisma.$disconnect()
+  }
 }
 
 module.exports.deleteUser = async( req, res) =>{
@@ -197,5 +212,9 @@ module.exports.deleteUser = async( req, res) =>{
   } 
   catch (error) {
     return res.status(500).json({message: error.message})
+  }
+  finally {
+    async () =>
+      await prisma.$disconnect()
   }
 }
