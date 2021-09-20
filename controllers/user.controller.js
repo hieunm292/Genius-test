@@ -53,8 +53,14 @@ module.exports.create = async( req, res) =>{
     if (!req.body.birthday) {
       error.push("birthday");
     };
+    if (!req.body.age) {
+      error.push("age");
+    };
     if (!req.body.gender) {
       error.push("gender");
+    };
+    if (!req.body.totalScore) {
+      error.push("Total Score");
     };
     if (!(error.length === 0)) {
       return res.status(400).json({
@@ -73,28 +79,33 @@ module.exports.create = async( req, res) =>{
     } 
     else {
       var salt = bcrypt.genSaltSync(10);
-      var hash = bcrypt.hashSync(req.body.password, salt);
-
+      var hashPass = bcrypt.hashSync(req.body.password, salt);
+      
       const account = await prisma.account.create({
         data: {
           name: req.body.name,
           email: req.body.email,
-          password: hash,
+          password: hashPass,
           gender: req.body.gender,
-          birthday: req.body.birthday
+          age: Number(req.body.age),
+          birthday: req.body.birthday,
+          totalScore: Number(req.body.totalScore)
         },
       });
-        res.json({ ok: true, message: "Create account successfully!" });
+      return res.json({ ok: true, message: "Create Account successfully!" });
     }
-  }
-  catch (error) {
+
+  } catch (error) {
     return res.status(500).json({message: error.message})
+  }
+  finally {
+    async () =>
+      await prisma.$disconnect()
   }
 }
 
 module.exports.update = async( req, res) =>{
   try {
-    const {name, email, password, birthday, gender} = req.body;
     var error = [];
 
     if (!req.body.name) {
@@ -109,8 +120,14 @@ module.exports.update = async( req, res) =>{
     if (!req.body.birthday) {
       error.push("birthday");
     };
+    if (!req.body.age) {
+      error.push("age");
+    };
     if (!req.body.gender) {
       error.push("gender");
+    };
+    if (!req.body.totalScore) {
+      error.push("Total Score");
     };
     if (!(error.length === 0)) {
       return res.status(400).json({
@@ -131,6 +148,8 @@ module.exports.update = async( req, res) =>{
       var nameUpdate = req.body.name;
       var birthdayUpdate = req.body.birthday;
       var genderUpdate = req.body.gender;
+      var ageUpdate = req.body.age;
+      var totalScoreUpdate = req.body.totalScore;
 
       const updateAccount = await prisma.account.update({
         where: {
@@ -141,7 +160,9 @@ module.exports.update = async( req, res) =>{
           email :emailUpdate,
           password: hashPass,
           birthday : birthdayUpdate,
-          gender : genderUpdate
+          gender : genderUpdate,
+          age : ageUpdate,
+          totalScore : totalScoreUpdate
         }
       });
       return res.json({ ok: true, message: "Update Account successfully!" });

@@ -26,10 +26,20 @@ model account {
   updateDate  DateTime @default(now()) @updatedAt @db.Timestamp(6)
   accRole     String   @default("user") @db.VarChar(45)
   note        String?  @db.Text
+  totalScore  Int
+  task        task[]
 }
 
 enum Gender {
   male
   female
   unknow
+}
+
+model task {
+  id          Int      @id @default(autoincrement())
+  description String
+  score       Int
+  account     account @relation(fields: [accountId], references: [id])
+  accountId   Int
 }
