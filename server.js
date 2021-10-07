@@ -38,6 +38,10 @@ app.use('/api', authRouter);
 const userRouter = require('./routes/user.routes');
 app.use('/api/user',userRouter);
 
+// task routes
+const taskRouter = require('./routes/task.routes');
+app.use('/api/task',taskRouter);
+
 // listen for requests
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
